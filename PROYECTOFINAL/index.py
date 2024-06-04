@@ -165,7 +165,7 @@ def JuegoPreguntas():
     niveles = [
         (preguntasNivel1, 70),  # Nivel 1
         (preguntasNivel2, 130),  # Nivel 2
-        (preguntasNivel3),  # Último nivel no tiene un puntaje mínimo para pasar
+        (preguntasNivel3, 190),  # Nivel 3 (requiere 190 puntos para jugar)
     ]
 
     # Puntuación inicial del jugador
@@ -176,11 +176,16 @@ def JuegoPreguntas():
         # Mostrar el número de nivel actual
         print(f"\n--- Nivel {i + 1} ---")
 
+        # Verificar si es el nivel 3 y el jugador no tiene suficientes puntos
+        if i == 2 and puntuacion < puntosParaPasar:
+            print("No tienes suficientes puntos para desbloquear este nivel.")
+            continue  # Pasar al siguiente nivel o terminar el juego según lo deseado
+
         # Jugar el nivel actual y actualizar la puntuación del jugador
         puntuacion = JugarNivel(preguntas, puntuacion)
 
         # Verificar si el jugador no alcanzó el puntaje mínimo para pasar al siguiente nivel
-        if  puntuacion < puntosParaPasar:
+        if puntuacion < puntosParaPasar:
             # Mostrar un mensaje de que el jugador no pasó el nivel
             print(
                 f"No alcanzaste los {puntosParaPasar} puntos necesarios para pasar al siguiente nivel."
