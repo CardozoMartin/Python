@@ -1,208 +1,179 @@
+import os
+import json
 from FuncionesJuego import JugarNivel
+from preguntas import preguntasNivel1, preguntasNivel2, preguntasNivel3
+from colorama import init, Fore, Style
+
+init(autoreset=True)  # Inicializar colorama
+
+RANKING_FILE = "ranking.json"
+
+
+def limpiar_consola():
+    if os.name == "nt":  # Para Windows
+        os.system("cls")
+    else:  # Para Unix (Linux y macOS)
+        os.system("clear")
+
+
+def descripcion_del_juego():
+    print(Fore.MAGENTA + "Bienvenido al Juego de Preguntas de Biología.")
+    print(
+        Fore.MAGENTA
+        + "En este juego, se te presentarán preguntas de opción múltiple sobre animales."
+    )
+    print(Fore.MAGENTA + "El juego está dividido en niveles de dificultad creciente.")
+    print(
+        Fore.MAGENTA
+        + "Deberás seleccionar la respuesta correcta ingresando el número correspondiente."
+    )
+    print(
+        Fore.MAGENTA
+        + "Puedes abandonar el juego en cualquier momento ingresando '0' como respuesta."
+    )
+    print(
+        Fore.MAGENTA
+        + "Tu puntuación se irá acumulando a medida que respondas correctamente."
+    )
+    print(Fore.MAGENTA + "¡Buena suerte y diviértete!")
+
+
+def guardar_ranking(nombre, puntuacion):
+    try:
+        with open(RANKING_FILE, "r") as file:
+            ranking = json.load(file)
+    except FileNotFoundError:
+        ranking = []
+
+    ranking.append({"nombre": nombre, "puntuacion": puntuacion})
+
+    with open(RANKING_FILE, "w") as file:
+        json.dump(ranking, file)
+
+
+def mostrar_ranking():
+    try:
+        with open(RANKING_FILE, "r") as file:
+            ranking = json.load(file)
+    except FileNotFoundError:
+        print(Fore.RED + "No hay datos de ranking disponibles.")
+        return
+
+    print(Fore.CYAN + "\n--- Ranking ---")
+    for entry in sorted(ranking, key=lambda x: x["puntuacion"], reverse=True):
+        print(Fore.CYAN + f"{entry['nombre']}: {entry['puntuacion']} puntos")
 
 
 def JuegoPreguntas():
-
-    preguntasNivel1 = [
-        {
-            "pregunta": "¿Qué animal es conocido por su gran trompa?",
-            "opciones": ["1. Elefante", "2. León", "3. Jirafa"],
-            "respuesta_correcta": 1,
-        },
-        {
-            "pregunta": "¿Cuál de estos animales es un mamífero marino?",
-            "opciones": ["1. Delfín", "2. León", "3. Tigre"],
-            "respuesta_correcta": 1,
-        },
-        {
-            "pregunta": "¿Qué animal se caracteriza por tener rayas en su pelaje?",
-            "opciones": ["1. Elefante", "2. Cebra", "3. Rinoceronte"],
-            "respuesta_correcta": 2,
-        },
-        {
-            "pregunta": "¿Cuál de estos animales es un reptil?",
-            "opciones": ["1. Ballena", "2. Cocodrilo", "3. Delfín"],
-            "respuesta_correcta": 2,
-        },
-        {
-            "pregunta": "¿Qué animal es conocido por ser el rey de la selva?",
-            "opciones": ["1. Tigre", "2. León", "3. Oso"],
-            "respuesta_correcta": 2,
-        },
-        {
-            "pregunta": "¿Cuál de estos animales vuela?",
-            "opciones": ["1. Elefante", "2. León", "3. Águila"],
-            "respuesta_correcta": 3,
-        },
-        {
-            "pregunta": "¿Qué animal es conocido por ser un depredador marino?",
-            "opciones": ["1. León", "2. Tiburón", "3. Cocodrilo"],
-            "respuesta_correcta": 2,
-        },
-        {
-            "pregunta": "¿Cuál de estos animales tiene aletas y branquias?",
-            "opciones": ["1. Ballena", "2. Delfín", "3. Tiburón"],
-            "respuesta_correcta": 3,
-        },
-        {
-            "pregunta": "¿Qué animal es conocido por ser el más grande del mundo?",
-            "opciones": ["1. Elefante", "2. Ballena Azul", "3. Jirafa"],
-            "respuesta_correcta": 2,
-        },
-        {
-            "pregunta": "¿Cuál de estos animales es un marsupial?",
-            "opciones": ["1. Canguro", "2. León", "3. Tigre"],
-            "respuesta_correcta": 1,
-        },
-    ]
-
-    preguntasNivel2 = [
-        {
-            "pregunta": "¿Cuál de los siguientes es un animal abiótico?",
-            "opciones": ["1. León", "2. Cactus", "3. Pingüino"],
-            "respuesta_correcta": 2,
-        },
-        {
-            "pregunta": "¿Cuál de estos animales es un reptil?",
-            "opciones": ["1. Ballena", "2. Serpiente", "3. Gorila"],
-            "respuesta_correcta": 2,
-        },
-        {
-            "pregunta": "¿Qué animal es un mamífero marino?",
-            "opciones": ["1. Tortuga", "2. Delfín", "3. Cocodrilo"],
-            "respuesta_correcta": 2,
-        },
-        {
-            "pregunta": "¿Cuál de estos animales es carnívoro?",
-            "opciones": ["1. Vaca", "2. León", "3. Caballo"],
-            "respuesta_correcta": 2,
-        },
-        {
-            "pregunta": "¿Qué animal tiene como característica principal el plumaje?",
-            "opciones": ["1. Pez", "2. Pájaro", "3. Tortuga"],
-            "respuesta_correcta": 2,
-        },
-        {
-            "pregunta": "¿Cuál de estos animales es un insecto?",
-            "opciones": ["1. Araña", "2. Abeja", "3. Serpiente"],
-            "respuesta_correcta": 2,
-        },
-        {
-            "pregunta": "¿Qué animal es conocido por su aguijón venenoso?",
-            "opciones": ["1. Avispa", "2. Hormiga", "3. Escarabajo"],
-            "respuesta_correcta": 1,
-        },
-        {
-            "pregunta": "¿Cuál de estos animales es ovíparo?",
-            "opciones": ["1. León", "2. Cocodrilo", "3. Pato"],
-            "respuesta_correcta": 3,
-        },
-        {
-            "pregunta": "¿Qué animal es un herbívoro rumiante?",
-            "opciones": ["1. Tigre", "2. Vaca", "3. Lobo"],
-            "respuesta_correcta": 2,
-        },
-        {
-            "pregunta": "¿Cuál de estos animales es conocido por su larga lengua?",
-            "opciones": ["1. León", "2. Jirafa", "3. Oso"],
-            "respuesta_correcta": 2,
-        },
-    ]
-
-    preguntasNivel3 = [
-        {
-            "pregunta": "¿Cuál de estos animales es ovíparo?",
-            "opciones": ["1. Ballena", "2. Tigre", "3. Rana"],
-            "respuesta_correcta": 3,
-        },
-        {
-            "pregunta": "¿Qué animal es conocido por ser un parásito del ser humano?",
-            "opciones": ["1. Pulga", "2. Mariposa", "3. Abeja"],
-            "respuesta_correcta": 1,
-        },
-        {
-            "pregunta": "¿Cuál de estos animales tiene un sistema de ecolocación?",
-            "opciones": ["1. Murciélago", "2. Serpiente", "3. Lobo"],
-            "respuesta_correcta": 1,
-        },
-        {
-            "pregunta": "¿Qué animal es capaz de cambiar de color para camuflarse?",
-            "opciones": ["1. Camaleón", "2. Tortuga", "3. Cocodrilo"],
-            "respuesta_correcta": 1,
-        },
-        {
-            "pregunta": "¿Cuál de estos animales es venenoso y mortal?",
-            "opciones": ["1. Medusa", "2. Estrella de Mar", "3. Pez Payaso"],
-            "respuesta_correcta": 1,
-        },
-        {
-            "pregunta": "¿Qué animal es conocido por ser el más rápido en tierra?",
-            "opciones": ["1. Guepardo", "2. León", "3. Elefante"],
-            "respuesta_correcta": 1,
-        },
-        {
-            "pregunta": "¿Cuál de estos animales tiene un cerebro muy desarrollado similar al humano?",
-            "opciones": ["1. Chimpancé", "2. Tigre", "3. Serpiente"],
-            "respuesta_correcta": 1,
-        },
-        {
-            "pregunta": "¿Qué animal es capaz de regenerar partes de su cuerpo?",
-            "opciones": ["1. Estrella de Mar", "2. Tiburón", "3. Tortuga"],
-            "respuesta_correcta": 1,
-        },
-        {
-            "pregunta": "¿Cuál de estos animales es conocido por su longevidad?",
-            "opciones": ["1. Elefante", "2. Tortuga", "3. León"],
-            "respuesta_correcta": 2,
-        },
-        {
-            "pregunta": "¿Qué animal tiene un órgano llamado buche para almacenar alimentos?",
-            "opciones": ["1. Pollo", "2. Cocodrilo", "3. Elefante"],
-            "respuesta_correcta": 1,
-        },
-    ]
-
     niveles = [
         (preguntasNivel1, 70),  # Nivel 1
         (preguntasNivel2, 130),  # Nivel 2
-        (preguntasNivel3, 190),  # Nivel 3 (requiere 190 puntos para jugar)
+        (preguntasNivel3, 190),  # Nivel 3 (referencia de puntos)
     ]
 
     # Puntuación inicial del jugador
     puntuacion = 0
 
-    # Iterar sobre cada nivel y jugar
-    for i, (preguntas, puntosParaPasar) in enumerate(niveles):
-        # Mostrar el número de nivel actual
-        print(f"\n--- Nivel {i + 1} ---")
+    # Pedir nombre del jugador
+    nombre = input(Fore.CYAN + "Ingrese su nombre: ")
 
-        # Verificar si es el nivel 3 y el jugador no tiene suficientes puntos
-        if i == 2 and puntuacion < puntosParaPasar:
-            print("No tienes suficientes puntos para desbloquear este nivel.")
-            continue  # Pasar al siguiente nivel o terminar el juego según lo deseado
+    # Mostrar menú inicial para seleccionar el nivel de inicio
+    while True:
+        limpiar_consola()
+        print(Fore.GREEN + "BIENVENIDO")
+        print(Fore.CYAN + "\n--- Menú de Inicio ---")
+        print(Fore.CYAN + "1. Comenzar desde el Nivel 1")
+        print(Fore.CYAN + "2. Comenzar desde el Nivel 2")
+        print(Fore.CYAN + "3. Comenzar desde el Nivel 3")
+        print(Fore.CYAN + "4. Ver el ranking")
+        print(Fore.CYAN + "5. Abandonar el juego")
+        eleccion = input(Fore.CYAN + "Selecciona una opción (1/2/3/4/5): ")
+
+        if eleccion in ["1", "2", "3"]:
+            nivel_inicial = int(eleccion) - 1
+            break
+        elif eleccion == "4":
+            limpiar_consola()
+            mostrar_ranking()
+            input(Fore.CYAN + "Presiona Enter para volver al menú.")
+        elif eleccion == "5":
+            limpiar_consola()
+            print(Fore.YELLOW + "Has decidido abandonar el juego. ¡Hasta la próxima!")
+            return
+        else:
+            limpiar_consola()
+            print(Fore.RED + "Selección inválida. Por favor, elige 1, 2, 3, 4 o 5.")
+
+    # Iterar sobre cada nivel y jugar desde el nivel inicial seleccionado
+    for i in range(nivel_inicial, len(niveles)):
+        limpiar_consola()
+        preguntas, _ = niveles[i]
+
+        # Mostrar el número de nivel actual
+        print(Fore.CYAN + f"\n--- Nivel {i + 1} ---")
 
         # Jugar el nivel actual y actualizar la puntuación del jugador
-        puntuacion = JugarNivel(preguntas, puntuacion)
+        puntuacion, abandono = JugarNivel(preguntas, puntuacion)
 
-        # Verificar si el jugador no alcanzó el puntaje mínimo para pasar al siguiente nivel
-        if puntuacion < puntosParaPasar:
-            # Mostrar un mensaje de que el jugador no pasó el nivel
+        if abandono:
+            limpiar_consola()
             print(
-                f"No alcanzaste los {puntosParaPasar} puntos necesarios para pasar al siguiente nivel."
+                Fore.YELLOW + f"Juego terminado. Tu puntuación final es: {puntuacion}"
             )
-            # Preguntar al jugador si desea volver a intentar el juego
-            if input("¿Quieres volver a intentar el juego? (s/n): ").lower() == "s":
-                # Si el jugador quiere volver a intentarlo, reiniciar el juego
-                JuegoPreguntas()
-            else:
-                # Si el jugador no quiere volver a intentarlo, mostrar la puntuación final y terminar el juego
-                print(f"Juego terminado. Tu puntuación final es: {puntuacion}")
+            guardar_ranking(nombre, puntuacion)
             return
 
-    # Si el jugador completa todos los niveles exitosamente, mostrar la puntuación final
-    print(
-        f"¡Felicitaciones! Has completado todos los niveles. Tu puntuación final es: {puntuacion}"
-    )
+        if i < len(niveles) - 1:  # Si no es el último nivel
+            continuar = input(
+                Fore.CYAN + "¿Quieres jugar el siguiente nivel? (s/n): "
+            ).lower()
+            if continuar != "s":
+                limpiar_consola()
+                print(
+                    Fore.YELLOW
+                    + f"Juego terminado. Tu puntuación final es: {puntuacion}"
+                )
+                guardar_ranking(nombre, puntuacion)
+                return
 
-# Iniciar el juego
-JuegoPreguntas()
+    limpiar_consola()
+    # Mostrar la puntuación final al completar todos los niveles
+    print(
+        Fore.GREEN
+        + f"¡Felicitaciones! Has completado todos los niveles. Tu puntuación final es: {puntuacion}"
+    )
+    guardar_ranking(nombre, puntuacion)
+
+
+def iniciar_juego():
+    usuario = "martin"
+    contraseña = "123456"
+    intentos = 1
+    while intentos <= 3:
+       
+        usuarioIngresado = input(Fore.CYAN + "Ingrese su usuario: ")
+        contraseñaIngresada = input(Fore.CYAN + "Ingrese su contraseña: ")
+        if usuario == usuarioIngresado and contraseña == contraseñaIngresada:
+            limpiar_consola()
+            print(Fore.GREEN + "Felicidades, ingresaste correctamente.")
+            descripcion_del_juego()
+            jugar = input(Fore.CYAN + "¿Quieres jugar? (s/n): ").lower()
+            if jugar == "s":
+                limpiar_consola()
+                JuegoPreguntas()
+            else:
+                limpiar_consola()
+                print(Fore.YELLOW + "¡Hasta la próxima!")
+            break  # Asegúrate de romper el ciclo después de ingresar correctamente
+        else:
+            print(Fore.RED + f"Usuario o contraseña incorrectos, llevas {intentos}/3 intentos")
+            intentos += 1
+
+    if intentos > 3:
+        limpiar_consola()
+        print(Fore.RED + "¡Alcanzaste el máximo de intentos!")
+
+        # Iniciar el juego
+
+
+iniciar_juego()
